@@ -125,7 +125,9 @@ class Message:
     ) -> None:
         """Add a key value widget to the selected section."""
 
-        key_value: Dict[str, Any] = {"content": content, "multiline": multiline}
+        key_value: Dict[str, Any] = {"content": content}
+        if multiline:
+            key_value["contentMultiline"] = True
         if top_label:
             key_value["topLabel"] = top_label
         if bottom_label:
