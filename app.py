@@ -7,7 +7,7 @@ __mail__ = "daniil.stash.k@gmail.com"
 
 import json
 from typing import Any, Dict, List, Optional
-from urllib import error, request
+from urllib import error, parse, request
 
 
 # --------------------------------------------------------------------------
@@ -212,10 +212,16 @@ class Message:
     def send(self, webhook_url: Optional[str] = None) -> Dict[str, Any]:
         """Send the card to Google Chat via webhook."""
 
-        url = webhook_url or self.webhook_url
+        url = (webhook_url or self.webhook_url or "").strip()
         if not url:
             raise WebhookError(
                 "No webhook URL provided. Please pass it to the constructor or send()."
+            )
+
+        parsed = parse.urlparse(url)
+        if not parsed.scheme or not parsed.netloc:
+            raise WebhookError(
+                "Invalid webhook URL provided. Expected a fully-qualified http(s) URL."
             )
 
         payload = json.dumps(self._prepare_msg()).encode("utf-8")
